@@ -9,4 +9,13 @@ local autopair = require 'custom.plugins.autopairs'
 return {
   autopair,
   'lambdalisue/suda.vim',
+  {
+    'akinsho/toggleterm.nvim',
+    version = '*',
+    opts = {
+      direction = 'tab',
+      hide_numbers = true,
+      open_mapping = [[<C-q>]],
+    },
+  },
 }
