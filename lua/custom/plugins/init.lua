@@ -3,11 +3,7 @@
 --
 -- See the kickstart.nvim README for more information
 --
-
-local autopair = require 'custom.plugins.autopairs'
-
 return {
-  autopair,
   'lambdalisue/suda.vim',
   {
     'akinsho/toggleterm.nvim',
