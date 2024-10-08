@@ -3,12 +3,16 @@
 --
 -- See the kickstart.nvim README for more information
 --
+--
+--
+vim.keymap.set('n', '<leader>ee', 'oif err != nil {<CR>}<Esc>Oreturn err<Esc>')
+
 return {
   'lambdalisue/suda.vim',
-  {
-    'pocco81/auto-save.nvim',
-    config = {
-      enabled = true,
-    },
-  },
+  -- {
+  --   'pocco81/auto-save.nvim',
+  --   config = {
+  --     enabled = true,
+  --   },
+  -- },
 }
