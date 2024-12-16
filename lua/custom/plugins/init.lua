@@ -6,6 +6,8 @@
 --
 --
 vim.keymap.set('n', '<leader>ee', 'oif err != nil {<CR>}<Esc>Oreturn err<Esc>')
+vim.keymap.set('n', '<leader>er', 'oif err != nil {<CR>}<Esc>Olog.Fatal(err)<Esc>')
+vim.keymap.set('n', '<leader>o', ':Lexplore<CR>', { desc = 'toggels dir tree', noremap = true, silent = true })
 
 return {
   'lambdalisue/suda.vim',
