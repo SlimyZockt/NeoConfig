@@ -712,7 +712,7 @@ require('lazy').setup({
         },
       }
 
-      require('lspconfig').nixld.setup {}
+      require('lspconfig').nixd.setup {}
     end,
   },
 
