@@ -660,6 +660,7 @@ require('lazy').setup({
         ts_ls = {},
         dockerls = {},
         docker_compose_language_service = {},
+        nixd = {},
         --
         lua_ls = {
           -- cmd = {...},
