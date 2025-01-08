@@ -42,7 +42,7 @@ return {
         desc = 'Debug: Set Breakpoint',
       },
       -- Toggle to see last session result. Without this, you can't see session output in case of unhandled exception.
-      { '<F7>', dapui.toggle, desc = 'Debug: See last session result.' },
+      -- { '<F7>', dapui.toggle, desc = 'Debug: See last session result.' },
       unpack(keys),
     }
   end,
@@ -92,6 +92,19 @@ return {
     dap.listeners.after.event_initialized['dapui_config'] = dapui.open
     dap.listeners.before.event_terminated['dapui_config'] = dapui.close
     dap.listeners.before.event_exited['dapui_config'] = dapui.close
+    dap.adapters.godot = {
+      type = 'server',
+      host = '127.0.0.1',
+      port = 6006,
+    }
+    dap.configurations.gdscript = {
+      {
+        type = 'godot',
+        request = 'launch',
+        name = 'Launch scene',
+        project = '${workspaceFolder}',
+      },
+    }
 
     -- Install golang specific config
     require('dap-go').setup {
