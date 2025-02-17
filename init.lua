@@ -403,6 +403,9 @@ require('lazy').setup({
           --   mappings = {
           --     i = { ['<c-enter>'] = 'to_fuzzy_refine' },
           --   },
+          file_ignore_patterns = {
+            '*.import',
+          },
 
           vimgrep_arguments = {
             'rg',
@@ -419,7 +422,6 @@ require('lazy').setup({
             '--glob=!**/.idea/*',
             '--glob=!**/.vscode/*',
             '--glob=!**/.godot/*',
-            '--glob=!**/*.import',
             '--glob=!**/build/*',
             '--glob=!**/dist/*',
             '--glob=!**/yarn.lock',
@@ -441,7 +443,6 @@ require('lazy').setup({
             '--glob=!**/.git/*',
             '--glob=!**/.idea/*',
             '--glob=!**/.godot/*',
-            '--glob=!**/*.import',
             '--glob=!**/.vscode/*',
             '--glob=!**/build/*',
             '--glob=!**/dist/*',
