@@ -673,19 +673,21 @@ require('lazy').setup({
       --  - settings (table): Override the default settings passed when initializing the server.
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
-        clangd = {},
         gopls = {},
         pyright = {},
         rust_analyzer = {},
         astro = {},
         tailwindcss = {},
-        emmet_language_server = {},
+        emmet_language_server = {
+          filetypes = { 'css', 'eruby', 'html', 'javascript', 'javascriptreact', 'less', 'sass', 'scss', 'pug', 'typescriptreact', 'templ' },
+        },
         html = {},
         htmx = {},
         templ = {},
         markdown_oxide = {},
         eslint = {},
         hyprls = {},
+        jdtls = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
         -- Some languages (like typescript) have entire language plugins that can be useful:
@@ -713,6 +715,12 @@ require('lazy').setup({
       }
 
       require('lspconfig').gdscript.setup(capabilities)
+      require('lspconfig').zls.setup {
+        cmd = { '/run/current-system/sw/bin/zls' },
+      }
+      require('lspconfig').clangd.setup {
+        cmd = { '/run/current-system/sw/bin/clangd' },
+      }
 
       -- Ensure the servers and tools above are installed
       --  To check the current status of installed tools and/or manually install
@@ -787,6 +795,7 @@ require('lazy').setup({
         nix = { 'nixfmt' },
         markdown = { 'mdsl' },
         gdscript = { 'gdtoolkit' },
+        c = { 'clang-format' },
 
         -- Conform can also run multiple formatters sequentially
         python = { 'isort', 'black' },
@@ -820,12 +829,12 @@ require('lazy').setup({
           -- `friendly-snippets` contains a variety of premade snippets.
           --    See the README about individual language/framework/plugin snippets:
           --    https://github.com/rafamadriz/friendly-snippets
-          -- {
-          --   'rafamadriz/friendly-snippets',
-          --   config = function()
-          --     require('luasnip.loaders.from_vscode').lazy_load()
-          --   end,
-          -- },
+          {
+            'rafamadriz/friendly-snippets',
+            config = function()
+              require('luasnip.loaders.from_vscode').lazy_load()
+            end,
+          },
         },
       },
       'saadparwaiz1/cmp_luasnip',
@@ -1007,15 +1016,6 @@ require('lazy').setup({
   --
   --  Here are some example plugins that I've included in the Kickstart repository.
   --  Uncomment any of the lines below to enable them (you will need to restart nvim).
-
-  {
-    'iamcco/markdown-preview.nvim',
-    cmd = { 'MarkdownPreviewToggle', 'MarkdownPreview', 'MarkdownPreviewStop' },
-    ft = { 'markdown' },
-    build = function()
-      vim.fn['mkdp#util#install']()
-    end,
-  },
   --
   require 'kickstart.plugins.indent_line',
   require 'kickstart.plugins.debug',
