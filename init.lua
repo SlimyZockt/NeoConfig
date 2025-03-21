@@ -526,6 +526,7 @@ require('lazy').setup({
       { 'williamboman/mason.nvim', config = true }, -- NOTE: Must be loaded before dependants
       'williamboman/mason-lspconfig.nvim',
       'WhoIsSethDaniel/mason-tool-installer.nvim',
+      'p00f/clangd_extensions.nvim',
 
       -- Useful status updates for LSP.
       -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
@@ -673,7 +674,21 @@ require('lazy').setup({
       --  - settings (table): Override the default settings passed when initializing the server.
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
-        gopls = {},
+        gopls = {
+          settings = {
+            gopls = {
+              hints = {
+                rangeVariableTypes = true,
+                parameterNames = true,
+                constantValues = true,
+                assignVariableTypes = true,
+                compositeLiteralFields = true,
+                compositeLiteralTypes = true,
+                functionTypeParameters = true,
+              },
+            },
+          },
+        },
         pyright = {},
         rust_analyzer = {},
         astro = {},
@@ -688,6 +703,27 @@ require('lazy').setup({
         eslint = {},
         hyprls = {},
         jdtls = {},
+        clangd = {
+          settings = {
+            InlayHints = {
+              Designators = true,
+              Enabled = true,
+              ParameterNames = true,
+              DeducedTypes = true,
+            },
+            Hover = { ShowAKA = true },
+          },
+          cmd = {
+            'clangd',
+            '--background-index',
+            '--clang-tidy',
+            '--header-insertion=iwyu',
+            '--completion-style=detailed',
+            '--function-arg-placeholders=0',
+            '--fallback-style=llvm',
+          },
+        },
+        zls = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
         -- Some languages (like typescript) have entire language plugins that can be useful:
@@ -707,6 +743,9 @@ require('lazy').setup({
               completion = {
                 callSnippet = 'Replace',
               },
+              hint = {
+                enable = true, -- necessary
+              },
               -- You can toggle below to ignore Lua_LS's noisy `missing-fields` warnings
               -- diagnostics = { disable = { 'missing-fields' } },
             },
@@ -715,12 +754,46 @@ require('lazy').setup({
       }
 
       require('lspconfig').gdscript.setup(capabilities)
-      require('lspconfig').zls.setup {
-        cmd = { '/run/current-system/sw/bin/zls' },
-      }
-      require('lspconfig').clangd.setup {
-        cmd = { '/run/current-system/sw/bin/clangd' },
-      }
+      -- require('clangd_extensions').setup {
+      --   ast = {
+      --     memory_usage = {
+      --       border = 'none',
+      --     },
+      --     symbol_info = {
+      --       border = 'none',
+      --     },
+      --     autoSetHints = false,
+      --     role_icons = {
+      --       -- These require codicons (https://github.com/microsoft/vscode-codicons)
+      --       type = '',
+      --       declaration = '',
+      --       expression = '',
+      --       specifier = '',
+      --       statement = '',
+      --       ['template argument'] = '',
+      --     },
+      --
+      --     kind_icons = {
+      --       Compound = '',
+      --       Recovery = '',
+      --       TranslationUnit = '',
+      --       PackExpansion = '',
+      --       TemplateTypeParm = '',
+      --       TemplateTemplateParm = '',
+      --       TemplateParamObject = '',
+      --     },
+      --
+      --     highlights = {
+      --       detail = 'Comment',
+      --     },
+      --   },
+      --   memory_usage = {
+      --     border = 'none',
+      --   },
+      --   symbol_info = {
+      --     border = 'none',
+      --   },
+      -- }
 
       -- Ensure the servers and tools above are installed
       --  To check the current status of installed tools and/or manually install
@@ -829,12 +902,12 @@ require('lazy').setup({
           -- `friendly-snippets` contains a variety of premade snippets.
           --    See the README about individual language/framework/plugin snippets:
           --    https://github.com/rafamadriz/friendly-snippets
-          {
-            'rafamadriz/friendly-snippets',
-            config = function()
-              require('luasnip.loaders.from_vscode').lazy_load()
-            end,
-          },
+          -- {
+          --   'rafamadriz/friendly-snippets',
+          --   config = function()
+          --     require('luasnip.loaders.from_vscode').lazy_load()
+          --   end,
+          -- },
         },
       },
       'saadparwaiz1/cmp_luasnip',
@@ -843,6 +916,7 @@ require('lazy').setup({
       --  nvim-cmp does not ship with all sources by default. They are split
       --  into multiple repos for maintenance purposes.
       'hrsh7th/cmp-nvim-lsp',
+      'hrsh7th/cmp-nvim-lsp-signature-help',
       'hrsh7th/cmp-path',
     },
     config = function()
@@ -918,6 +992,7 @@ require('lazy').setup({
           },
           { name = 'nvim_lsp' },
           { name = 'luasnip' },
+          { name = 'nvim_lsp_signature_help' },
           { name = 'path' },
         },
       }
