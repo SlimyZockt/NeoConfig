@@ -7,9 +7,6 @@
 --
 vim.keymap.set('n', '<leader>ee', 'oif err != nil {<CR>}<Esc>Oreturn err<Esc>')
 vim.keymap.set('n', '<leader>er', 'oif err != nil {<CR>}<Esc>Olog.Fatal(err)<Esc>')
-vim.keymap.set('n', '<leader>oo', ':Lexplore<CR>', { desc = 'toggels dir tree', noremap = true, silent = true })
-vim.keymap.set('n', '<leader>mp', ':MarkdownPreviewToggle<CR>', { desc = 'toggels Markdown Preview', noremap = true, silent = true })
-vim.keymap.set('n', '<leader>ou', ':UndotreeToggle<CR>')
 
 local gdproject = io.open(vim.fn.getcwd() .. '/project.godot', 'r')
 if gdproject then
@@ -20,7 +17,12 @@ end
 return {
   'lambdalisue/suda.vim',
   'christoomey/vim-tmux-navigator',
-  'mbbill/undotree',
+  {
+    'mbbill/undotree',
+    config = function()
+      vim.keymap.set('n', '<leader>tu', vim.cmd.UndotreeToggle, { desc = '[T]oggele [U]ndotree', noremap = true, silent = true })
+    end,
+  },
   {
     'MysticalDevil/inlay-hints.nvim',
     event = 'LspAttach',
@@ -32,33 +34,60 @@ return {
   {
     'iamcco/markdown-preview.nvim',
     cmd = { 'MarkdownPreviewToggle', 'MarkdownPreview', 'MarkdownPreviewStop' },
+    build = 'cd app && yarn install',
+    init = function()
+      vim.g.mkdp_filetypes = { 'markdown' }
+    end,
     ft = { 'markdown' },
-    build = function()
-      vim.fn['mkdp#util#install']()
+    config = function()
+      vim.keymap.set('n', '<leader>tm', vim.cmd.MarkdownPreviewToggle, { desc = '[T]oggele [M]arkdown Preview', noremap = true, silent = true })
     end,
   },
-  -- {
-  --   'mfussenegger/nvim-jdtls',
-  --   dependencies = { 'mfussenegger/nvim-dap' },
-  --   config = function()
-  --     local function jdtls_cmd()
-  --       if vim.loop.os_uname().sysname == 'Linux' then
-  --         return '/run/current-system/sw/bin/jdtls'
-  --       end
-  --       return ''
-  --     end
-  --
-  --     require('jdtls').start_or_attach {
-  --       cmd = { jdtls_cmd() },
-  --       root_dir = vim.fs.dirname(vim.fs.find({ 'gradlew', '.git', 'mvnw' }, { upward = true })[1]),
-  --     }
-  --   end,
-  -- },
+  {
+    'echasnovski/mini.files',
+    version = false,
+    config = function()
+      require('mini.files').setup()
+
+      vim.keymap.set('n', '<leader>te', require('mini.files').open, { desc = '[T]oggele [e]xplorer', noremap = true, silent = true })
+    end,
+  },
   {
     'olexsmir/gopher.nvim',
     ft = 'go',
     ---@type gopher.Config
-    opts = {},
+    opts = {
+      -- log level, you might consider using DEBUG or TRACE for debugging the plugin
+      log_level = vim.log.levels.INFO,
+
+      -- timeout for running internal commands
+      timeout = 2000,
+      installer_timeout = 2000,
+      commands = {
+        go = 'go',
+        gomodifytags = 'gomodifytags',
+        gotests = 'gotests',
+        impl = 'impl',
+        iferr = 'iferr',
+      },
+      gotests = {
+        -- gotests doesn't have template named "default" so this plugin uses "default" to set the default template
+        template = 'default',
+        -- path to a directory containing custom test code templates
+        template_dir = nil,
+        -- switch table tests from using slice to map (with test name for the key)
+        named = false,
+      },
+      gotag = {
+        transform = 'snakecase',
+        -- default tags to add to struct fields
+        default_tag = 'json',
+      },
+      iferr = {
+        -- choose a custom error message
+        message = nil,
+      },
+    },
     config = function(_, opts)
       require('gopher').setup(opts)
     end,
