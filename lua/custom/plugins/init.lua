@@ -17,6 +17,42 @@ end
 return {
   'lambdalisue/suda.vim',
   'christoomey/vim-tmux-navigator',
+  -- tailwind-tools.lua
+  {
+    'Jezda1337/nvim-html-css',
+    dependencies = { 'hrsh7th/nvim-cmp', 'nvim-treesitter/nvim-treesitter' }, -- Use this if you're using nvim-cmp
+    -- dependencies = { "saghen/blink.cmp", "nvim-treesitter/nvim-treesitter" }, -- Use this if you're using blink.cmp
+    opts = {
+      enable_on = { -- Example file types
+        'html',
+        'htmldjango',
+        'tsx',
+        'jsx',
+        'erb',
+        'svelte',
+        'vue',
+        'blade',
+        'php',
+        'templ',
+        'astro',
+      },
+      handlers = {
+        definition = {
+          bind = 'gd',
+        },
+        hover = {
+          bind = 'K',
+          wrap = true,
+          border = 'none',
+          position = 'cursor',
+        },
+      },
+      documentation = {
+        auto_show = true,
+      },
+      style_sheets = {},
+    },
+  },
   {
     'mbbill/undotree',
     config = function()
@@ -43,13 +79,41 @@ return {
       vim.keymap.set('n', '<leader>tm', vim.cmd.MarkdownPreviewToggle, { desc = '[T]oggele [M]arkdown Preview', noremap = true, silent = true })
     end,
   },
+  -- {
+  --   'MeanderingProgrammer/render-markdown.nvim',
+  --   dependencies = { 'nvim-treesitter/nvim-treesitter', 'echasnovski/mini.nvim' }, -- if you use the mini.nvim suite
+  --   -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'echasnovski/mini.icons' }, -- if you use standalone mini plugins
+  --   -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-tree/nvim-web-devicons' }, -- if you prefer nvim-web-devicons
+  --   ---@module 'render-markdown'
+  --   ---@type render.md.UserConfig
+  --   opts = {},
+  --   config = function()
+  --     require('render-markdown').setup {
+  --       completions = { lsp = { enabled = true } },
+  --     }
+  --   end,
+  -- },
+  -- {
+  --   'echasnovski/mini.files',
+  --   version = false,
+  --   config = function()
+  --     require('mini.files').setup()
+  --
+  --     vim.keymap.set('n', '<leader>te', require('mini.files').open, { desc = '[T]oggele [e]xplorer', noremap = true, silent = true })
+  --   end,
+  -- },
   {
-    'echasnovski/mini.files',
-    version = false,
-    config = function()
-      require('mini.files').setup()
+    'stevearc/oil.nvim',
+    ---@module 'oil'
+    ---@type oil.SetupOpts
+    opts = {},
+    -- Optional dependencies
+    dependencies = { { 'echasnovski/mini.icons', opts = {} } },
+    lazy = false,
+    config = function(_, opts)
+      require('oil').setup(opts)
 
-      vim.keymap.set('n', '<leader>te', require('mini.files').open, { desc = '[T]oggele [e]xplorer', noremap = true, silent = true })
+      vim.keymap.set('n', '<leader>te', '<CMD>Oil<CR>', { desc = '[T]oggele [e]xplorer', noremap = true, silent = true })
     end,
   },
   {

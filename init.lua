@@ -355,7 +355,7 @@ require('lazy').setup({
   { -- Fuzzy Finder (files, lsp, etc)
     'nvim-telescope/telescope.nvim',
     event = 'VimEnter',
-    branch = '0.1.x',
+    branch = 'master',
     dependencies = {
       'nvim-lua/plenary.nvim',
       { -- If encountering errors, see telescope-fzf-native README for installation instructions
@@ -746,6 +746,7 @@ require('lazy').setup({
         eslint = {},
         hyprls = {},
         -- jdtls = {},
+        ols = {},
         clangd = {
           settings = {
             InlayHints = {
@@ -767,6 +768,8 @@ require('lazy').setup({
             '--function-arg-placeholders=0',
             '--fallback-style=llvm',
           },
+
+          filetypes = { 'c', 'cpp', 'h' },
         },
         zls = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
@@ -835,7 +838,7 @@ require('lazy').setup({
         },
       }
 
-      vim.keymap.set('n', '<leader>jr', vim.cmd.JavaRunnerRunMain, { desc = '[R]un Main', noremap = true, silent = true })
+      -- vim.keymap.set('n', '<leader>jr', vim.cmd.JavaRunnerRunMain, { desc = '[R]un Main', noremap = true, silent = true })
       vim.keymap.set('n', '<leader>js', vim.cmd.JavaRunnerStopMain, { desc = '[S]top Main', noremap = true, silent = true })
       vim.keymap.set('n', '<leader>jl', vim.cmd.JavaRunnerToggleLogs, { desc = 'Toggle [L]og', noremap = true, silent = true })
 
@@ -902,7 +905,7 @@ require('lazy').setup({
         markdown = { 'mdsl' },
         gdscript = { 'gdtoolkit' },
         c = { 'clang-format' },
-
+        odin = { 'odinfmt' },
         -- Conform can also run multiple formatters sequentially
         python = { 'isort', 'black' },
         --
@@ -1027,6 +1030,7 @@ require('lazy').setup({
           { name = 'luasnip' },
           { name = 'nvim_lsp_signature_help' },
           { name = 'path' },
+          { name = 'html-css' },
         },
       }
     end,
