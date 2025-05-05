@@ -1,4 +1,4 @@
--- You can add your own plugins here or in other files in this directory!
+-- You can add your own plugins here or in other files in this directory!cu
 --  I promise not to create any merge conflicts in this directory :)
 --
 -- See the kickstart.nvim README for more information
@@ -17,6 +17,12 @@ end
 return {
   'lambdalisue/suda.vim',
   'christoomey/vim-tmux-navigator',
+  {
+    'nvim-java/nvim-java',
+    config = function()
+      require('java').setup()
+    end,
+  },
   -- tailwind-tools.lua
   {
     'Jezda1337/nvim-html-css',
@@ -91,15 +97,6 @@ return {
   --     require('render-markdown').setup {
   --       completions = { lsp = { enabled = true } },
   --     }
-  --   end,
-  -- },
-  -- {
-  --   'echasnovski/mini.files',
-  --   version = false,
-  --   config = function()
-  --     require('mini.files').setup()
-  --
-  --     vim.keymap.set('n', '<leader>te', require('mini.files').open, { desc = '[T]oggele [e]xplorer', noremap = true, silent = true })
   --   end,
   -- },
   {

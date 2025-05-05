@@ -90,6 +90,7 @@ P.S. You can delete this when you're done too. It's your config now! :)
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 -- Set to true if you have a Nerd Font installed and selected in the terminal
+vim.g.guifont = 'JetBrainsMono Nerd Font'
 vim.g.have_nerd_font = true
 -- [[ Setting options ]]
 -- See `:help vim.opt`
@@ -123,10 +124,6 @@ end)
 
 -- Enable break indent
 vim.opt.breakindent = true
-vim.opt.autoindent = true
-vim.opt.tabstop = 4
-vim.opt.shiftwidth = 4
-vim.opt.expandtab = true
 vim.opt.autoindent = true
 vim.opt.tabstop = 4
 vim.opt.shiftwidth = 4
@@ -484,7 +481,7 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>/', function()
         -- You can pass additional configuration to Telescope to change the theme, layout, etc.
         builtin.current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
-          winblend = 10,
+          winblend = 0,
           previewer = false,
         })
       end, { desc = '[/] Fuzzily search in current buffer' })
@@ -746,7 +743,14 @@ require('lazy').setup({
         eslint = {},
         hyprls = {},
         -- jdtls = {},
-        ols = {},
+        ols = {
+          init_options = {
+            enable_inlay_hints = false,
+            enable_checker_only_saved = false,
+            verbose = true,
+            enable_fake_methods = true,
+          },
+        },
         clangd = {
           settings = {
             InlayHints = {
@@ -826,15 +830,15 @@ require('lazy').setup({
             server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
             require('lspconfig')[server_name].setup(server)
           end,
-          jdtls = function()
-            require('java').setup {
-              -- Your custom jdtls settings goes here
-            }
-
-            require('lspconfig').jdtls.setup {
-              -- Your custom nvim-java configuration goes here
-            }
-          end,
+          -- jdtls = function()
+          --   require('java').setup {
+          --     -- Your custom jdtls settings goes here
+          --   }
+          --
+          --   require('lspconfig').jdtls.setup {
+          --     -- Your custom nvim-java configuration goes here
+          --   }
+          -- end,
         },
       }
 
@@ -1061,7 +1065,7 @@ require('lazy').setup({
         keywordStyle = { italic = true },
         statementStyle = { bold = true },
         typeStyle = {},
-        transparent = false, -- do not set background color
+        transparent = true, -- do not set background color
         dimInactive = false, -- dim inactive window `:h hl-NormalNC`
         terminalColors = true, -- define vim.g.terminal_color_{0,17}
         colors = { -- add/modify theme and palette colors
@@ -1075,11 +1079,24 @@ require('lazy').setup({
             PmenuSel = { fg = 'NONE', bg = theme.ui.bg_p2 },
             PmenuSbar = { bg = theme.ui.bg_m1 },
             PmenuThumb = { bg = theme.ui.bg_p2 },
+            NormalFloat = { bg = 'none' },
+            FloatBorder = { bg = 'none' },
+            FloatTitle = { bg = 'none' },
+
+            -- Save an hlgroup with dark background and dimmed foreground
+            -- so that you can use it where your still want darker windows.
+            -- E.g.: autocmd TermOpen * setlocal winhighlight=Normal:NormalDark
+            NormalDark = { fg = theme.ui.fg_dim, bg = theme.ui.bg_m3 },
+
+            -- Popular plugins that open floats will link to NormalFloat by default;
+            -- set their background accordingly if you wish to keep them dark and borderless
+            LazyNormal = { bg = theme.ui.bg_m3, fg = theme.ui.fg_dim },
+            MasonNormal = { bg = theme.ui.bg_m3, fg = theme.ui.fg_dim },
           }
         end,
         theme = 'wave', -- Load "wave" theme
         background = { -- map the value of 'background' option to a theme
-          dark = 'wave', -- try "dragon" !
+          dark = 'dragon', -- try "dragon" wave!
           light = 'lotus',
         },
       }
