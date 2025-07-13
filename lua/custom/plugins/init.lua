@@ -17,12 +17,12 @@ end
 return {
   'lambdalisue/suda.vim',
   'christoomey/vim-tmux-navigator',
-  {
-    'nvim-java/nvim-java',
-    config = function()
-      require('java').setup()
-    end,
-  },
+  -- {
+  --   'nvim-java/nvim-java',
+  --   config = function()
+  --     require('java').setup()
+  --   end,
+  -- },
   -- tailwind-tools.lua
   {
     'Jezda1337/nvim-html-css',
@@ -41,6 +41,7 @@ return {
         'php',
         'templ',
         'astro',
+        'templ',
       },
       handlers = {
         definition = {
@@ -85,31 +86,45 @@ return {
       vim.keymap.set('n', '<leader>tm', vim.cmd.MarkdownPreviewToggle, { desc = '[T]oggele [M]arkdown Preview', noremap = true, silent = true })
     end,
   },
-  -- {
-  --   'MeanderingProgrammer/render-markdown.nvim',
-  --   dependencies = { 'nvim-treesitter/nvim-treesitter', 'echasnovski/mini.nvim' }, -- if you use the mini.nvim suite
-  --   -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'echasnovski/mini.icons' }, -- if you use standalone mini plugins
-  --   -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-tree/nvim-web-devicons' }, -- if you prefer nvim-web-devicons
-  --   ---@module 'render-markdown'
-  --   ---@type render.md.UserConfig
-  --   opts = {},
-  --   config = function()
-  --     require('render-markdown').setup {
-  --       completions = { lsp = { enabled = true } },
-  --     }
-  --   end,
-  -- },
   {
     'stevearc/oil.nvim',
     ---@module 'oil'
     ---@type oil.SetupOpts
-    opts = {},
+    opts = {
+      view_options = {
+        -- Show files and directories that start with "."
+        show_hidden = true,
+        -- This function defines what is considered a "hidden" file
+        is_hidden_file = function(name, bufnr)
+          local m = name:match '^%.'
+          return m ~= nil
+        end,
+        -- This function defines what will never be shown, even when `show_hidden` is set
+        is_always_hidden = function(name, bufnr)
+          return false
+        end,
+        -- Sort file names with numbers in a more intuitive order for humans.
+        -- Can be "fast", true, or false. "fast" will turn it off for large directories.
+        natural_order = 'fast',
+        -- Sort file and directory names case insensitive
+        case_insensitive = false,
+        sort = {
+          -- sort order can be "asc" or "desc"
+          -- see :help oil-columns to see which columns are sortable
+          { 'type', 'asc' },
+          { 'name', 'asc' },
+        },
+        -- Customize the highlight group for the file name
+        highlight_filename = function(entry, is_hidden, is_link_target, is_link_orphan)
+          return nil
+        end,
+      },
+    },
     -- Optional dependencies
     dependencies = { { 'echasnovski/mini.icons', opts = {} } },
     lazy = false,
     config = function(_, opts)
       require('oil').setup(opts)
-
       vim.keymap.set('n', '<leader>te', '<CMD>Oil<CR>', { desc = '[T]oggele [e]xplorer', noremap = true, silent = true })
     end,
   },
@@ -154,6 +169,26 @@ return {
     end,
     build = function()
       vim.cmd [[silent! GoInstallDeps]]
+    end,
+  },
+  {
+    'nvim-treesitter/nvim-treesitter-context',
+    config = function()
+      require('treesitter-context').setup {
+        enable = true, -- Enable this plugin (Can be enabled/disabled later via commands)
+        multiwindow = false, -- Enable multiwindow support.
+        max_lines = 0, -- How many lines the window should span. Values <= 0 mean no limit.
+        min_window_height = 0, -- Minimum editor window height to enable context. Values <= 0 mean no limit.
+        line_numbers = true,
+        multiline_threshold = 20, -- Maximum number of lines to show for a single context
+        trim_scope = 'outer', -- Which context lines to discard if `max_lines` is exceeded. Choices: 'inner', 'outer'
+        mode = 'cursor', -- Line used to calculate context. Choices: 'cursor', 'topline'
+        -- Separator between context and content. Should be a single character string, like '-'.
+        -- When separator is set, the context will only show up when there are at least 2 lines above cursorline.
+        separator = nil,
+        zindex = 20, -- The Z-index of the context window
+        on_attach = nil, -- (fun(buf: integer): boolean) return false to disable attaching
+      }
     end,
   },
 }

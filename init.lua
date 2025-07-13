@@ -108,6 +108,7 @@ vim.opt.mouse = 'a'
 
 vim.opt.spell = true
 vim.opt.spelllang = 'en_us,de_de'
+-- vim.opt.spellfile = '~/.cache/nvim'
 -- if vim.loop.os_uname().sysname == 'Windows_NT'then
 --   vim.opt.spellfile = 'C:Users\\slimy\\AppData\\Local\\nvim'
 -- end
@@ -165,6 +166,13 @@ vim.opt.colorcolumn = '120'
 
 -- Minimal number of screen lines to keep above and below the cursor.
 vim.opt.scrolloff = 10
+
+-- Add better fold support
+vim.opt.foldmethod = 'expr'
+vim.opt.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
+vim.opt.foldlevel = 99
+vim.opt.foldlevelstart = 2
+vim.opt.foldnestmax = 2
 
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
@@ -527,7 +535,6 @@ require('lazy').setup({
       'williamboman/mason-lspconfig.nvim',
       'WhoIsSethDaniel/mason-tool-installer.nvim',
       'p00f/clangd_extensions.nvim',
-      'nvim-java/nvim-java',
       -- Useful status updates for LSP.
       -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
       { 'j-hui/fidget.nvim', opts = {} },
@@ -732,7 +739,60 @@ require('lazy').setup({
         pyright = {},
         rust_analyzer = {},
         astro = {},
-        tailwindcss = {},
+        tailwindcss = {
+          {
+            'aspnetcorerazor',
+            'astro',
+            'astro-markdown',
+            'blade',
+            'clojure',
+            'django-html',
+            'htmldjango',
+            'edge',
+            'eelixir',
+            'elixir',
+            'ejs',
+            'erb',
+            'eruby',
+            'gohtml',
+            'gohtmltmpl',
+            'haml',
+            'handlebars',
+            'hbs',
+            'html',
+            'htmlangular',
+            'html-eex',
+            'heex',
+            'jade',
+            'leaf',
+            'liquid',
+            'markdown',
+            'mdx',
+            'mustache',
+            'njk',
+            'nunjucks',
+            'php',
+            'razor',
+            'slim',
+            'twig',
+            'css',
+            'less',
+            'postcss',
+            'sass',
+            'scss',
+            'stylus',
+            'sugarss',
+            'javascript',
+            'javascriptreact',
+            'reason',
+            'rescript',
+            'typescript',
+            'typescriptreact',
+            'vue',
+            'svelte',
+            'templ',
+          },
+        },
         emmet_language_server = {
           filetypes = { 'css', 'eruby', 'html', 'javascript', 'javascriptreact', 'less', 'sass', 'scss', 'pug', 'typescriptreact', 'templ' },
         },
@@ -745,10 +805,15 @@ require('lazy').setup({
         -- jdtls = {},
         ols = {
           init_options = {
-            enable_inlay_hints = false,
+            enable_inlay_hints = true,
             enable_checker_only_saved = false,
             verbose = true,
             enable_fake_methods = true,
+            enable_procedure_snippet = true,
+            enable_rename = true,
+            enable_references = true,
+            enable_document_symbols = true,
+            checker_args = '-strict-style -vet',
           },
         },
         clangd = {
@@ -787,7 +852,7 @@ require('lazy').setup({
         docker_compose_language_service = {},
         --
         lua_ls = {
-          -- cmd = {...},
+          -- cmd = { '/run/current-system/sw/bin/lua-language-server' },
           -- filetypes = { ...},
           -- capabilities = {},
           settings = {
@@ -807,62 +872,47 @@ require('lazy').setup({
 
       require('lspconfig').gdscript.setup(capabilities)
       --  You can press `g?` for help in this menu.
-      require('mason').setup()
+      -- require('mason').setup()
 
       -- You can add other tools here that you want Mason to install
       -- for you, so that they are available from within Neovim.
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
-        'stylua', -- Used to format Lua code
-        'templ',
+        -- 'stylua', -- Used to format Lua code
+        -- 'templ',
       })
-      require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
-      require('mason-lspconfig').setup {
-        ensure_installed = {},
-        automatic_installation = false,
-        handlers = {
-          function(server_name)
-            local server = servers[server_name] or {}
-            -- This handles overriding only values explicitly passed
-            -- by the server configuration above. Useful when disabling
-            -- certain features of an LSP (for example, turning off formatting for ts_ls)
-            server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
-            require('lspconfig')[server_name].setup(server)
-          end,
-          -- jdtls = function()
-          --   require('java').setup {
-          --     -- Your custom jdtls settings goes here
-          --   }
-          --
-          --   require('lspconfig').jdtls.setup {
-          --     -- Your custom nvim-java configuration goes here
-          --   }
-          -- end,
-        },
-      }
+      for _, k in pairs(ensure_installed) do
+        local server = servers[k] or {}
+        server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
+        require('lspconfig')[k].setup(server)
+      end
 
-      -- vim.keymap.set('n', '<leader>jr', vim.cmd.JavaRunnerRunMain, { desc = '[R]un Main', noremap = true, silent = true })
-      vim.keymap.set('n', '<leader>js', vim.cmd.JavaRunnerStopMain, { desc = '[S]top Main', noremap = true, silent = true })
-      vim.keymap.set('n', '<leader>jl', vim.cmd.JavaRunnerToggleLogs, { desc = 'Toggle [L]og', noremap = true, silent = true })
+      -- require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
-      vim.keymap.set('n', '<leader>jb', vim.cmd.JavaBuildBuildWorkspace, { desc = '[B]uild Workspace', noremap = true, silent = true })
-
-      vim.keymap.set('n', '<leader>jc', vim.cmd.JavaBuildCleanWorkspace, { desc = '[C]lean Workspace', noremap = true, silent = true })
-
-      vim.keymap.set('n', '<leader>jp', vim.cmd.JavaProfile, { desc = '[P]rofile', noremap = true, silent = true })
-
-      vim.keymap.set('n', '<leader>jp', vim.cmd.JavaProfile, { desc = '[P]rofile', noremap = true, silent = true })
-
-      vim.keymap.set('n', '<leader>jj', vim.cmd.JavaSettingsChangeRuntime, { desc = '[J]DK', noremap = true, silent = true })
-
-      vim.keymap.set('n', '<leader>jtc', vim.cmd.JavaTestRunCurrentClass, { desc = '[C]lass', noremap = true, silent = true })
-      vim.keymap.set('n', '<leader>jtm', vim.cmd.JavaTestRunCurrentMethod, { desc = '[M]ethod', noremap = true, silent = true })
-
-      vim.keymap.set('n', '<leader>jtr', vim.cmd.JavaTestViewLastReport, { desc = '[R]eport', noremap = true, silent = true })
-      vim.keymap.set('n', '<leader>jdc', vim.cmd.JavaTestDebugCurrentClass, { desc = '[C]lass', noremap = true, silent = true })
-      vim.keymap.set('n', '<leader>jdm', vim.cmd.JavaTestDebugCurrentMethod, { desc = '[M]ethod', noremap = true, silent = true })
-
+      -- require('mason-lspconfig').setup {
+      --   ensure_installed = {},
+      --   automatic_installation = false,
+      --   handlers = {
+      --     function(server_name)
+      --       local server = servers[server_name] or {}
+      --       -- This handles overriding only values explicitly passed
+      --       -- by the server configuration above. Useful when disabling
+      --       -- certain features of an LSP (for example, turning off formatting for ts_ls)
+      --       server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
+      --       require('lspconfig')[server_name].setup(server)
+      --     end,
+      --     -- jdtls = function()
+      --     --   require('java').setup {
+      --     --     -- Your custom jdtls settings goes here
+      --     --   }
+      --     --
+      --     --   require('lspconfig').jdtls.setup {
+      --     --     -- Your custom nvim-java configuration goes here
+      --     --   }
+      --     -- end,
+      --   },
+      -- }
       require 'lspconfig'
 
       require('lspconfig').nixd.setup {}
@@ -1182,7 +1232,6 @@ require('lazy').setup({
   require 'kickstart.plugins.debug',
   -- require 'kickstart.plugins.lint',
   require 'kickstart.plugins.autopairs',
-  require 'kickstart.plugins.neo-tree',
   require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
 
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
